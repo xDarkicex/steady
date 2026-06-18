@@ -107,19 +107,39 @@ func Load(path string) (*Model, error) {
 	// Read the small arrays from the file (after the table).
 	weights := memory.MustPoolSlice[float32](modelPool, numLabels*dim)
 	weights = weights[:numLabels*dim]
-	readFloats(f, weights)
+	if err := readFloats(f, weights); err != nil {
+		memory.Munmap(tableRaw)
+		modelPool.Free()
+		scratchPool.Free()
+		return nil, fmt.Errorf("steady: read weights: %w", err)
+	}
 
 	bias := memory.MustPoolSlice[float32](modelPool, numLabels)
 	bias = bias[:numLabels]
-	readFloats(f, bias)
+	if err := readFloats(f, bias); err != nil {
+		memory.Munmap(tableRaw)
+		modelPool.Free()
+		scratchPool.Free()
+		return nil, fmt.Errorf("steady: read bias: %w", err)
+	}
 
 	plattA := memory.MustPoolSlice[float32](modelPool, numLabels)
 	plattA = plattA[:numLabels]
-	readFloats(f, plattA)
+	if err := readFloats(f, plattA); err != nil {
+		memory.Munmap(tableRaw)
+		modelPool.Free()
+		scratchPool.Free()
+		return nil, fmt.Errorf("steady: read plattA: %w", err)
+	}
 
 	plattB := memory.MustPoolSlice[float32](modelPool, numLabels)
 	plattB = plattB[:numLabels]
-	readFloats(f, plattB)
+	if err := readFloats(f, plattB); err != nil {
+		memory.Munmap(tableRaw)
+		modelPool.Free()
+		scratchPool.Free()
+		return nil, fmt.Errorf("steady: read plattB: %w", err)
+	}
 
 	var qRaw [4]byte
 	if _, err := f.Read(qRaw[:]); err != nil {
@@ -167,8 +187,8 @@ func (m *Model) Close() error {
 	return nil
 }
 
-func readFloats(f *os.File, dst []float32) {
-	binary.Read(f, binary.LittleEndian, dst)
+func readFloats(f *os.File, dst []float32) error {
+	return binary.Read(f, binary.LittleEndian, dst)
 }
 
 func float32fromle(b [4]byte) float32 {

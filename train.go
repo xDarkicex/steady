@@ -173,8 +173,10 @@ func initTable(bucket, dim int) ([]float32, error) {
 	defer fd.Close()
 	raw, err := memory.MmapFile(int(fd.Fd()), 0, int(size), true)
 	if err != nil {
+		os.Remove(name)
 		return nil, err
 	}
+	os.Remove(name) // unlink now; mapping survives until Munmap
 	table := unsafe.Slice((*float32)(unsafe.Pointer(&raw[0])), bucket*dim)
 	scale := float32(1.0 / float64(dim))
 	rng := uint32(12345)

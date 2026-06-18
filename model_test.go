@@ -103,3 +103,62 @@ func TestLoadMissingFile(t *testing.T) {
 		t.Fatal("expected error for missing file")
 	}
 }
+
+func TestLoadTruncated(t *testing.T) {
+	// Valid header but truncated data — write only the header + partial table.
+	path := t.TempDir() + "/truncated.bin"
+	f, err := os.Create(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bucket, dim, numLabels := 32, 8, 2
+	var hdr [32]byte
+	binary.LittleEndian.PutUint32(hdr[0:4], modelMagic)
+	binary.LittleEndian.PutUint32(hdr[4:8], modelVersion)
+	binary.LittleEndian.PutUint32(hdr[8:12], uint32(bucket))
+	binary.LittleEndian.PutUint32(hdr[12:16], uint32(dim))
+	binary.LittleEndian.PutUint32(hdr[16:20], 4)
+	binary.LittleEndian.PutUint32(hdr[20:24], 16)
+	binary.LittleEndian.PutUint32(hdr[24:28], uint32(numLabels))
+	f.Write(hdr[:])
+	// Write only half the expected table, then truncate.
+	partialTable := make([]float32, (bucket*dim)/2)
+	binary.Write(f, binary.LittleEndian, partialTable)
+	f.Close()
+
+	_, err = Load(path)
+	if err == nil {
+		t.Fatal("expected error for truncated model")
+	}
+}
+
+func TestLoadCorruptWeights(t *testing.T) {
+	// Full table but no weights — should error on readFloats.
+	path := t.TempDir() + "/corrupt.bin"
+	f, err := os.Create(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bucket, dim, numLabels := 16, 4, 2
+	var hdr [32]byte
+	binary.LittleEndian.PutUint32(hdr[0:4], modelMagic)
+	binary.LittleEndian.PutUint32(hdr[4:8], modelVersion)
+	binary.LittleEndian.PutUint32(hdr[8:12], uint32(bucket))
+	binary.LittleEndian.PutUint32(hdr[12:16], uint32(dim))
+	binary.LittleEndian.PutUint32(hdr[16:20], 4)
+	binary.LittleEndian.PutUint32(hdr[20:24], 16)
+	binary.LittleEndian.PutUint32(hdr[24:28], uint32(numLabels))
+	f.Write(hdr[:])
+	// Write full table.
+	fullTable := make([]float32, bucket*dim)
+	binary.Write(f, binary.LittleEndian, fullTable)
+	// Write partial weights (incomplete — should fail on bias or platt read).
+	partialWeights := make([]float32, 1) // only 1 float, need numLabels*dim = 8
+	binary.Write(f, binary.LittleEndian, partialWeights)
+	f.Close()
+
+	_, err = Load(path)
+	if err == nil {
+		t.Fatal("expected error for corrupt weights")
+	}
+}

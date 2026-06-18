@@ -3,7 +3,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/xDarkicex/steady.svg)](https://pkg.go.dev/github.com/xDarkicex/steady)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xDarkicex/steady)](https://goreportcard.com/report/github.com/xDarkicex/steady)
 [![Coverage](https://img.shields.io/badge/coverage-88%25-green.svg)](https://github.com/xDarkicex/steady/actions)
-[![Cyclomatic Complexity](https://img.shields.io/badge/gocyclo-100%25-brightgreen.svg)](https://github.com/xDarkicex/steady)
+[![Cyclomatic Complexity](https://img.shields.io/badge/CC-%E2%89%A410-brightgreen.svg)](https://github.com/xDarkicex/steady)
 [![Vulnerabilities](https://img.shields.io/badge/vuln-go%20vulncheck-blue.svg)](https://pkg.go.dev/golang.org/x/vuln)
 [![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8.svg)](https://go.dev/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -52,7 +52,7 @@ import (
 func main() {
     m, _ := steady.Load("model.bin")
     defer m.Close()
-    m.SetLabelNames([]string{"identity", "constraint", "decision", "fact", "preference", "episode"})
+    m.SetLabelNames([]string{"spam", "urgent", "question", "update", "complaint", "praise"})
 
     result := m.Classify("I am a Go developer working in Berlin")
     if result.IsEmpty() {
@@ -93,7 +93,7 @@ vector. No tokenizer. No vocabulary. Works on any UTF-8 text.
     │
     ▼
 OVA logistic head — one independent sigmoid per label over the hidden vector.
-A text can be both identity AND constraint simultaneously (no forced mutual
+A text can match multiple categories simultaneously (no forced mutual
 exclusion like softmax).
     │
     ▼

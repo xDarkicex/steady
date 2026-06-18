@@ -10,16 +10,14 @@ import (
 
 // Example_classify demonstrates loading a model and classifying text.
 func Example_classify() {
-	// Generate a small synthetic model for the example.
 	lines := []string{
-		"__label__identity I am a software engineer",
-		"__label__constraint secrets must not be shared",
-		"__label__decision let us use Redis",
-		"__label__fact the server runs on port 443",
-		"__label__preference I prefer Go over Python",
-		"__label__episode yesterday I fixed a bug",
+		"__label__spam buy cheap watches now",
+		"__label__urgent server down in production",
+		"__label__question how do I reset my password",
+		"__label__update deployed v2.3.1 to staging",
+		"__label__complaint the checkout page is broken",
+		"__label__praise the new dashboard looks amazing",
 	}
-	// Repeat for minimum training data
 	input := strings.Repeat(strings.Join(lines, "\n")+"\n", 30)
 	tmpDir, _ := os.MkdirTemp("", "steady_example_*")
 	defer os.RemoveAll(tmpDir)
@@ -35,6 +33,7 @@ func Example_classify() {
 	cfg.Epochs = 10
 	cfg.LR = 0.2
 	cfg.Seed = 42
+	cfg.LabelNames = []string{"spam", "urgent", "question", "update", "complaint", "praise"}
 	if err := steady.Train(cfg); err != nil {
 		panic(err)
 	}
@@ -46,12 +45,12 @@ func Example_classify() {
 	defer m.Close()
 	m.SetLabelNames(cfg.LabelNames)
 
-	result := m.Classify("I am a software engineer")
+	result := m.Classify("buy cheap watches now")
 	if result.IsEmpty() {
 		fmt.Println("noise")
 	} else {
 		fmt.Println(result.Kinds[0])
 	}
 	// Output:
-	// identity
+	// spam
 }

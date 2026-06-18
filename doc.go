@@ -9,7 +9,7 @@
 //
 //	m, _ := steady.Load("model.bin")
 //	defer m.Close()
-//	m.SetLabelNames([]string{"identity", "constraint", "decision", "fact", "preference", "episode"})
+//	m.SetLabelNames([]string{"spam", "urgent", "question", "update", "complaint", "praise"})
 //	result := m.Classify("I am a Go developer")
 //	if !result.IsEmpty() {
 //		fmt.Println(result.Kinds[0], result.Confidences[0])

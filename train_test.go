@@ -197,6 +197,7 @@ func TestTrainEndToEnd(t *testing.T) {
 	cfg.NumGoroutines = 2
 	cfg.CalibSplit = 0.3
 	cfg.Seed = 42
+	cfg.LabelNames = []string{"identity", "constraint", "decision", "fact", "preference", "episode"}
 
 	if err := Train(cfg); err != nil {
 		t.Fatalf("Train: %v", err)

@@ -42,7 +42,7 @@ func DefaultTrainConfig() TrainConfig {
 		NumGoroutines: runtime.GOMAXPROCS(0),
 		CalibSplit:    0.15,
 		Seed:          42,
-		LabelNames:    []string{"identity", "constraint", "decision", "fact", "preference", "episode"},
+		LabelNames:    []string{"label_0", "label_1", "label_2", "label_3", "label_4", "label_5"},
 	}
 }
 

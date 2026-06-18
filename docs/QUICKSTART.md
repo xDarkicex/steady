@@ -30,12 +30,12 @@ go run ./cmd/steady \
 One example per line. 6 labels by default:
 
 ```
-__label__identity I am a Go developer working in Berlin
-__label__constraint API keys must never be committed to version control
-__label__decision I decided to use PostgreSQL instead of MySQL
-__label__fact The latency p99 is around 200ms
-__label__preference I prefer Neovim over VS Code any day
-__label__episode Yesterday I deployed to production and everything went smoothly
+__label__spam buy cheap watches now
+__label__urgent server down in production alert
+__label__question how do I reset my password please help
+__label__update deployed v2.3.1 to staging successfully
+__label__complaint the checkout page gave me a 500 error
+__label__praise love the new dark mode theme looks amazing
 ```
 
 ## Inference
@@ -43,10 +43,10 @@ __label__episode Yesterday I deployed to production and everything went smoothly
 ```go
 m, _ := steady.Load("model.bin")
 defer m.Close()
-m.SetLabelNames([]string{"identity", "constraint", "decision", "fact", "preference", "episode"})
+m.SetLabelNames([]string{"spam", "urgent", "question", "update", "complaint", "praise"})
 
 result := m.Classify("oh btw I prefer Neovim over VS Code")
-// result.Kinds = ["preference"]
+// result.Kinds = ["complaint"]
 // result.Confidences = [0.97]
 
 result = m.Classify("hmm interesting point")
@@ -71,7 +71,7 @@ OS page cache handles memory pressure automatically.
    Rows are averaged into a 64-dim hidden vector.
 2. **OVA logistic head** — one sigmoid per label over the hidden vector.
    Independent per-class probabilities (not softmax — a text can be both
-   identity AND constraint simultaneously).
+   spam AND urgent simultaneously).
 3. **Platt scaling** — raw logits are calibrated via logistic regression
    (A×logit + B) fit on a held-out set.
 4. **Conformal prediction** — labels with non-conformity ≤ Q are included

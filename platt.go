@@ -9,7 +9,7 @@ import (
 // ApplyPlatt returns the Platt-calibrated probability for a raw score.
 // P(calibrated) = 1 / (1 + exp(-(A * score + B)))
 func ApplyPlatt(score, a, b float32) float32 {
-	return 1.0 / (1.0 + float32(math.Exp(float64(-(a*score+b)))))
+	return 1.0 / (1.0 + float32(math.Exp(float64(-(a*score + b)))))
 }
 
 // CalibratePlatt fits Platt scaling parameters (A, B) for each label using

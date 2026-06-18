@@ -65,7 +65,7 @@ func hashWindow(data []byte) uint32 {
 
 // accumulateRow adds the table row at index (h % bucket) to hidden.
 func accumulateRow(table []float32, bucket, dim int, h uint32, hidden []float32) {
-	row := int(h % uint32(bucket)) * dim
+	row := int(h%uint32(bucket)) * dim
 	for j := 0; j < dim; j++ {
 		hidden[j] += table[row+j]
 	}

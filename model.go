@@ -12,22 +12,22 @@ import (
 
 const (
 	// modelMagic is the 4-byte identifier for steady model files ("BYTE").
-	modelMagic  uint32 = 0x42595445
+	modelMagic   uint32 = 0x42595445
 	modelVersion uint32 = 1
 	headerSize   int64  = 32
 )
 
 // Model holds a loaded classification model. All fields are read-only after Load.
 type Model struct {
-	table      []float32 // mmap'd embedding table, bucket × dim
-	weights    []float32 // OVA weights, numLabels × dim
-	bias       []float32 // OVA bias, numLabels
-	plattA     []float32 // Platt slope, numLabels
-	plattB     []float32 // Platt intercept, numLabels
-	q          float32   // conformal quantile
-	bucket     int
-	dim        int
-	numLabels  int
+	table       []float32 // mmap'd embedding table, bucket × dim
+	weights     []float32 // OVA weights, numLabels × dim
+	bias        []float32 // OVA bias, numLabels
+	plattA      []float32 // Platt slope, numLabels
+	plattB      []float32 // Platt intercept, numLabels
+	q           float32   // conformal quantile
+	bucket      int
+	dim         int
+	numLabels   int
 	labelNames  []string
 	modelPool   *memory.Pool
 	scratchPool *memory.Pool

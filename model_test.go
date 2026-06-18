@@ -26,7 +26,7 @@ func TestSaveAndLoad(t *testing.T) {
 	binary.LittleEndian.PutUint32(hdr[4:8], modelVersion)
 	binary.LittleEndian.PutUint32(hdr[8:12], uint32(bucket))
 	binary.LittleEndian.PutUint32(hdr[12:16], uint32(dim))
-	binary.LittleEndian.PutUint32(hdr[16:20], 4) // minN
+	binary.LittleEndian.PutUint32(hdr[16:20], 4)  // minN
 	binary.LittleEndian.PutUint32(hdr[20:24], 16) // maxN
 	binary.LittleEndian.PutUint32(hdr[24:28], uint32(numLabels))
 	f.Write(hdr[:])

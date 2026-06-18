@@ -7,11 +7,11 @@ import (
 	"math"
 	"os"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"unsafe"
-	"slices"
 
 	"github.com/xDarkicex/memory"
 )
@@ -209,7 +209,7 @@ func trainEmbeddings(examples []example, table, weights, bias []float32, cfg Tra
 		}(examples[start:end])
 	}
 	wg.Wait()
-	
+
 	return nil
 }
 
@@ -230,7 +230,7 @@ func hogwildWorker(shard []example, table, weights, bias []float32, cfg TrainCon
 		for _, ex := range shard {
 			pool.Reset()
 			hidden := Encode([]byte(ex.text), table, cfg.Bucket, cfg.Dim, pool)
-			
+
 			logits := memory.MustPoolSlice[float32](pool, numLabels)
 			logits = logits[:numLabels]
 			PredictLogits(hidden, weights, bias, logits)
@@ -243,7 +243,7 @@ func hogwildWorker(shard []example, table, weights, bias []float32, cfg TrainCon
 
 			// Backpropagate through the logistic head using negative sampling
 			targets := [2]int{ex.label, -1}
-			
+
 			// Generate one random negative label using fast XorShift32
 			rng ^= rng << 13
 			rng ^= rng >> 17
@@ -271,15 +271,15 @@ func hogwildWorker(shard []example, table, weights, bias []float32, cfg TrainCon
 
 				// Update bias and weights with simple SGD
 				for j := 0; j < cfg.Dim; j++ {
-					atomicAddFloat32(&weights[l*cfg.Dim+j], -errVal*hidden[j] - 1e-4*weights[l*cfg.Dim+j])
+					atomicAddFloat32(&weights[l*cfg.Dim+j], -errVal*hidden[j]-1e-4*weights[l*cfg.Dim+j])
 				}
 				if target == 1.0 {
-					atomicAddFloat32(&bias[l], -errVal - 1e-4*bias[l])
+					atomicAddFloat32(&bias[l], -errVal-1e-4*bias[l])
 				} else {
-					atomicAddFloat32(&bias[l], -errVal - 1e-4*bias[l])
+					atomicAddFloat32(&bias[l], -errVal-1e-4*bias[l])
 				}
 			}
-			
+
 			// Center gradHidden to prevent embedding drift!
 			var meanGrad float32
 			for j := 0; j < cfg.Dim; j++ {
@@ -316,11 +316,11 @@ func updateEmbeddings(text []byte, table []float32, bucket, dim int, gradHidden 
 	if maxNGrams == 0 {
 		return
 	}
-	
+
 	hashes := memory.MustPoolSlice[uint32](pool, maxNGrams)
 	hashes = hashes[:maxNGrams]
 	var count int
-	
+
 	for _, n := range windows {
 		if n > len(text) {
 			continue
@@ -334,10 +334,10 @@ func updateEmbeddings(text []byte, table []float32, bucket, dim int, gradHidden 
 	if count == 0 {
 		return
 	}
-	
+
 	// Sort to bring duplicates together
 	slices.Sort(hashes[:count])
-	
+
 	// Count unique items for proper gradient scaling
 	uniqueCount := 1
 	for i := 1; i < count; i++ {
@@ -345,7 +345,7 @@ func updateEmbeddings(text []byte, table []float32, bucket, dim int, gradHidden 
 			uniqueCount++
 		}
 	}
-	
+
 	// Apply gradient to unique rows
 	for i := 0; i < count; i++ {
 		if i > 0 && hashes[i] == hashes[i-1] {
@@ -363,7 +363,7 @@ func updateEmbeddings(text []byte, table []float32, bucket, dim int, gradHidden 
 func calibratePlatt(pool *memory.Pool, examples []example, table []float32, weights, bias []float32, cfg TrainConfig) ([]float32, []float32, []float32) {
 	numLabels := len(cfg.LabelNames)
 	n := len(examples)
-	
+
 	rawScores := memory.MustPoolSlice[[]float32](pool, n)
 	rawScores = rawScores[:n]
 	labels := memory.MustPoolSlice[int](pool, n)

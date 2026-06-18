@@ -56,18 +56,18 @@ func BenchmarkClassify(b *testing.B) {
 	}
 
 	m := &Model{
-		table:      table,
-		weights:    weights,
-		bias:       bias,
-		plattA:     plattA,
-		plattB:     plattB,
-		q:          0.5,
-		bucket:     bucket,
-		dim:        dim,
-		numLabels:  numLabels,
-		labelNames: []string{"identity", "constraint", "decision", "fact", "preference", "episode"},
+		table:       table,
+		weights:     weights,
+		bias:        bias,
+		plattA:      plattA,
+		plattB:      plattB,
+		q:           0.5,
+		bucket:      bucket,
+		dim:         dim,
+		numLabels:   numLabels,
+		labelNames:  []string{"identity", "constraint", "decision", "fact", "preference", "episode"},
 		modelPool:   pool,
-			scratchPool: pool,
+		scratchPool: pool,
 	}
 
 	text := "I am a Go developer and API keys must never be committed"

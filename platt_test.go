@@ -8,7 +8,7 @@ import (
 
 func testPlattPool(t *testing.T) *memory.Pool {
 	t.Helper()
-	p, err := memory.NewPool(memory.AllocatorConfig{PoolSize: 1024 * 1024, SlabSize: 4096, SlabCount: 2})
+	p, err := memory.NewPool(memory.AllocatorConfig{PoolSize: 1024 * 1024, SlabSize: 4096, SlabCount: 2}, 64)
 	if err != nil {
 		t.Fatal(err)
 	}

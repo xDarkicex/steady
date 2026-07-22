@@ -11,7 +11,7 @@ func TestEncodeEmpty(t *testing.T) {
 		PoolSize:  1024 * 1024,
 		SlabSize:  4096,
 		SlabCount: 2,
-	})
+	}, 64)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +34,7 @@ func TestEncodeShortText(t *testing.T) {
 		PoolSize:  1024 * 1024,
 		SlabSize:  4096,
 		SlabCount: 2,
-	})
+	}, 64)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -58,7 +58,7 @@ func TestEncodeASCII(t *testing.T) {
 		PoolSize:  1024 * 1024,
 		SlabSize:  4096,
 		SlabCount: 2,
-	})
+	}, 64)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -90,7 +90,7 @@ func TestEncodeUTF8(t *testing.T) {
 		PoolSize:  1024 * 1024,
 		SlabSize:  4096,
 		SlabCount: 2,
-	})
+	}, 64)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -130,7 +130,7 @@ func TestEncodeBenchmark(t *testing.T) {
 		PoolSize:  1024 * 1024,
 		SlabSize:  4096,
 		SlabCount: 2,
-	})
+	}, 64)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -163,7 +163,7 @@ func BenchmarkEncode(b *testing.B) {
 		PoolSize:  64 * 1024 * 1024,
 		SlabSize:  1024 * 1024,
 		SlabCount: 16,
-	})
+	}, 64)
 	defer pool.Free()
 
 	bucket, dim := 20000, 64

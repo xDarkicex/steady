@@ -77,7 +77,7 @@ func Train(cfg TrainConfig) error {
 	defer memory.Munmap(unsafeSliceBytes(table))
 	pool, err := memory.NewPool(memory.AllocatorConfig{
 		PoolSize: 64 * 1024 * 1024, SlabSize: 1024 * 1024, SlabCount: 16,
-	})
+	}, 64)
 	if err != nil {
 		return err
 	}
@@ -219,7 +219,7 @@ func trainEmbeddings(examples []example, table, weights, bias []float32, cfg Tra
 func hogwildWorker(shard []example, table, weights, bias []float32, cfg TrainConfig) {
 	pool, err := memory.NewPool(memory.AllocatorConfig{
 		PoolSize: 16 * 1024 * 1024, SlabSize: 1024 * 1024, SlabCount: 8,
-	})
+	}, 64)
 	if err != nil {
 		return
 	}

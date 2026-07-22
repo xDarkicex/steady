@@ -36,7 +36,7 @@ func BenchmarkClassify(b *testing.B) {
 		PoolSize:  64 * 1024 * 1024,
 		SlabSize:  1024 * 1024,
 		SlabCount: 16,
-	})
+	}, 64)
 	defer pool.Free()
 
 	table := makeTable(bucket, dim)

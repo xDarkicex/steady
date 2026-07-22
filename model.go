@@ -79,7 +79,7 @@ func Load(path string) (*Model, error) {
 		PoolSize:  16 * 1024 * 1024,
 		SlabSize:  1024 * 1024,
 		SlabCount: 8,
-	})
+	}, 64)
 	if err != nil {
 		memory.Munmap(tableRaw)
 		return nil, fmt.Errorf("steady: create model pool: %w", err)
@@ -89,7 +89,7 @@ func Load(path string) (*Model, error) {
 		PoolSize:  2 * 1024 * 1024,
 		SlabSize:  256 * 1024,
 		SlabCount: 4,
-	})
+	}, 64)
 	if err != nil {
 		modelPool.Free()
 		memory.Munmap(tableRaw)

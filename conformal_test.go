@@ -8,7 +8,7 @@ import (
 
 func testPool(t *testing.T) *memory.Pool {
 	t.Helper()
-	p, err := memory.NewPool(memory.AllocatorConfig{PoolSize: 1024 * 1024, SlabSize: 4096, SlabCount: 2})
+	p, err := memory.NewPool(memory.AllocatorConfig{PoolSize: 1024 * 1024, SlabSize: 4096, SlabCount: 2}, 64)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -81,7 +81,7 @@ func TestPredictSetPartial(t *testing.T) {
 }
 
 func BenchmarkPredictSet(b *testing.B) {
-	pool, _ := memory.NewPool(memory.AllocatorConfig{PoolSize: 1024 * 1024, SlabSize: 4096, SlabCount: 2})
+	pool, _ := memory.NewPool(memory.AllocatorConfig{PoolSize: 1024 * 1024, SlabSize: 4096, SlabCount: 2}, 64)
 	defer pool.Free()
 	probs := []float32{0.95, 0.90, 0.85, 0.80, 0.10, 0.10}
 	names := []string{"identity", "constraint", "decision", "fact", "preference", "episode"}
